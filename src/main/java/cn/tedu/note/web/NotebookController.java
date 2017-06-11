@@ -38,6 +38,14 @@ public class NotebookController
 		return new JsonResult<Notebook>(book);
 	}
 
+	@RequestMapping("/rename.do")
+	@ResponseBody
+	public JsonResult<Boolean> rename(
+			String name, String noteBookId){
+		boolean b=notebookService.rename(name, noteBookId);
+		return new JsonResult<Boolean>(b);
+	}
+
 	@RequestMapping("/delete.do")
 	@ResponseBody
 	public JsonResult<Boolean> delete(

@@ -15,4 +15,5 @@ public interface NotebookDao {
 	Notebook findNotebookById(String notebookId);
 
 	int deleteNoteBook(Map<String, Object> params);
+	int rename(Map<String, Object> params);
 }

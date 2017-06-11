@@ -64,6 +64,18 @@
 		where 
 			cn_notebook_id=#{id};
 	</delete>
+
+	<update id="rename"
+		parameterType="map">
+		update 
+			cn_notebook
+		<set>
+			cn_notebook_name = #{name}
+		</set>
+		<where>
+			cn_notebook_id=#{noteBookId}
+		</where>
+	</update>
 	 
 </mapper>
 

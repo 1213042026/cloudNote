@@ -71,6 +71,24 @@ public class NotebookServiceImpl
 		throw new RuntimeException("保存失败");
 	}
 
+	public boolean rename(
+			String name, String noteBookId) 
+			throws UserNotFoundException {
+		if(name==null||name.trim().isEmpty()){
+			throw new NameException("笔记本名不能空！");
+		}
+		if(noteBookId==null||noteBookId.trim().isEmpty()){
+			throw new UserNotFoundException("noteBookId不能空！");
+		}
+		
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("name", name);
+		params.put("noteBookId", noteBookId);
+		int n = notebookDao.rename(params);
+		return n==1;
+	}
+
 	@Transactional
 	public boolean deleteNoteBook(String noteBookId) {
 		

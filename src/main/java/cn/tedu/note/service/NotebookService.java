@@ -14,4 +14,6 @@ public interface NotebookService {
 			String name, String userId)
 		throws UserNotFoundException; 
 	public boolean deleteNoteBook(String noteBookId);
+	public boolean rename(
+			String name, String noteBookId);
 }

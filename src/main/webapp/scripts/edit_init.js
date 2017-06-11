@@ -5,6 +5,7 @@ var deleteNoteId = 0;
 var deleteNoteBookId = 0;
 var deleteCollectId = 0;
 var deleteNoteCompleteId = 0;
+var renameNoteBookId = 0;
 var noteShareTemplate='<li class="online">'+
 	'<a>'+
 	'<i class="fa fa-file-text-o" title="online" rel="tooltip-bottom"></i>'+
@@ -119,6 +120,7 @@ $(function(){
 	$('#can').on('click', '.delete-note-complete', deleteNoteCompleteConfirm);
 	$('#can').on('click', '.delete-collect', deleteCollectNoteConfirm);
 	$('#can').on('click', '.delete-note-book', deleteNoteBookConfirm);
+	$('#can').on('click', '.btn-rename', renameNoteBookActionConfirm);
 
 	$('#pc_part_4 ul')
 		.on('click', 'li .btn_replay',
@@ -131,6 +133,10 @@ $(function(){
 	$('#pc_part_1 ul')
 		.on('click', 'li .btn_delete',
 		deleteNoteBookAction);
+
+	$('#pc_part_1 ul')
+		.on('click', 'li .btn_rename',
+		renameNoteBookAction);
 
 	$('#pc_part_6 ul')
 		.on('click', 'li .btn_collect',
@@ -248,6 +254,17 @@ function deleteNoteBookAction(event) {
 
 }
 
+function renameNoteBookAction(event) {
+	event.stopPropagation(); 
+	var btn = $(this);
+	renameNoteBookId = btn.parents('li').data('notebookId');
+	
+	var url="alert/alert_rename.html";
+	$('#can').load(url);
+	$('.opacity_bg').show();
+
+}
+
 function deleteNoteAction(){
 	var btn = $(this);
 	var id=btn.parents('li').data('noteId');
@@ -307,6 +324,34 @@ function deleteNoteBookConfirm() {
 		if(result.state==SUCCESS){
 		$('#can').load('./alert/alert_confirm.html',function(){
 			$('#error_info').text(' 删除成功');
+			$('.opacity_bg').show();
+		});
+		loadNotebooksAction();
+		$('#pc_part_2 ul').empty();
+		$('#pc_part_2 ul').data('notebookId', false);
+		}else{
+			alert(result.message);
+		}
+	});
+}
+
+function renameNoteBookActionConfirm() {
+	var name = $('#input_notebook_rename').val();
+	if (name == "") {
+		alert("笔记本名不能为空");
+		return;
+	}
+
+	var data = {
+		noteBookId : renameNoteBookId,
+		name : name
+	}
+	closeDialog();
+	var url='notebook/rename.do';
+	$.post(url, data, function(result){
+		if(result.state==SUCCESS){
+		$('#can').load('./alert/alert_confirm.html',function(){
+			$('#error_info').text('重命名成功');
 			$('.opacity_bg').show();
 		});
 		loadNotebooksAction();

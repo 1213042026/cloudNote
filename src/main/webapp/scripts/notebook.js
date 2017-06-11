@@ -22,12 +22,20 @@ function loadNotebooksAction(){
 }
 //笔记本列表区域的显示模板
 //替换[name]为真正笔记本名
+// var notebookTemplate=
+// 	'<li class="disable">' +
+// 		'<a >' + // class="checked"
+// 			'<i class="fa fa-book" title="online" rel="tooltip-bottom"></i>'+
+// 			'[name]<button type="button" class="btn btn-default btn-xs btn_position btn_rename" title="重命名"><i class="fa fa-pencil-square-o"></i></button>' +
+// 			'<button type="button" class="btn btn-default btn-xs btn_position btn_delete" title="删除"><i class="fa fa-times"></i></button>'+
+// 		'</a>'+
+// 	'</li>';
 var notebookTemplate=
-	'<li class="online">' +
-		'<a >' + // class="checked"
-			'<i class="fa fa-book" title="online" rel="tooltip-bottom"></i>'+
-			'[name]<button type="button" class="btn btn-default btn-xs btn_position btn_delete" title="删除"><i class="fa fa-times"></i></button>'+
-		'</a>'+
+	'<li class="disable">'+
+	'<a>'+
+	'[name]<button type="button" class="btn btn-default btn-xs btn_position btn_delete btn_rename" title="重命名"><i class="fa fa-pencil-square-o"></i></button>'+
+	'<button type="button" class="btn btn-default btn-xs btn_position_2 btn_delete" title="删除"><i class="fa fa-times"></i></button>' + 
+	'</a>'+
 	'</li>';
 
 function showNotebooks(notebooks){
