@@ -1,5 +1,7 @@
 package cn.tedu.note.dao;
 
+import java.util.Map;
+
 import cn.tedu.note.entity.User;
 
 /**
@@ -21,6 +23,8 @@ public interface UserDao {
 	int saveUser(User user);
 
 	User findUserById(String userId);
+
+	int changePassword(Map<String, Object> params);
 }
 
 

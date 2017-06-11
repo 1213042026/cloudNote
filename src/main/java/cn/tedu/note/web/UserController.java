@@ -52,6 +52,14 @@ public class UserController extends BaseController {
 			name, nick, password, confirm);
 		return new JsonResult<User>(user);
 	}
+
+	@RequestMapping("/changePassword.do")
+	@ResponseBody
+	public JsonResult<Boolean> changePassword(
+			String password, String userId){
+		boolean b=userService.changePassword(password, userId);
+		return new JsonResult<Boolean>(b);
+	}
 		
 	//UserController
 	@RequestMapping("/heartbeat.do")
@@ -60,5 +68,15 @@ public class UserController extends BaseController {
 	public JsonResult<String> heartbeat(){
 		//System.out.println("OK"); 
 		return new JsonResult<String>("OK");
+	}
+
+	@RequestMapping("/logout.do")
+	@ResponseBody
+	//返回值: {state:0,data:{id...}}
+	//返回值: {state:1,message:"用户名..."}
+	public JsonResult<Boolean> logout(HttpServletRequest req){
+		
+		req.getSession().invalidate();
+		return new JsonResult<Boolean>(true); 
 	}
 }

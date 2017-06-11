@@ -6,16 +6,12 @@
  * 在页面加载以后立即执行
  */
 function loadNotebooksAction(){
-	console.log('loadNotebooksAction');
 	//发起Ajax请求, 获取笔记本列表数据
 	var url='notebook/list.do';
 	var data={userId:getCookie('userId')};
-	console.log(data);
 	$.getJSON(url, data, function(result){
-		console.log(result);
 		if(result.state==SUCCESS){
 			var list=result.data;
-			console.log(list);
 			//将笔记本列表显示到页面上
 			showNotebooks(list);
 		}else{
@@ -30,7 +26,7 @@ var notebookTemplate=
 	'<li class="online">' +
 		'<a >' + // class="checked"
 			'<i class="fa fa-book" title="online" rel="tooltip-bottom"></i>'+
-			'[name]'+
+			'[name]<button type="button" class="btn btn-default btn-xs btn_position btn_delete" title="删除"><i class="fa fa-times"></i></button>'+
 		'</a>'+
 	'</li>';
 
@@ -45,11 +41,9 @@ function showNotebooks(notebooks){
 		var notebook=notebooks[i];
 		var li = notebookTemplate.replace(
 				'[name]', notebook.name);
-		console.log(li);
 		
 		//绑定每个笔记本的ID到li元素上
-		li = $(li).data(
-				'notebookId', notebook.id);
+		li = $(li).data('notebookId', notebook.id);
 		
 		$('#notebooks').append(li);
 	}
@@ -80,6 +74,7 @@ function addNotebookAction(){
 			var notebook = result.data;
 			var li = notebookTemplate.replace(
 					'[name]', notebook.name);
+			li = $(li).data('notebookId', notebook.id);
 			$('#notebooks').prepend(li);
 			closeDialog();
 		}else{

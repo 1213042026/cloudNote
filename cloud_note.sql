@@ -1,7 +1,4 @@
-﻿
-SET FOREIGN_KEY_CHECKS=0;
-
-DROP database IF EXISTS `cloud_note`;
+﻿DROP database IF EXISTS `cloud_note`;
 create database cloud_note;
 use cloud_note;
 -- ----------------------------

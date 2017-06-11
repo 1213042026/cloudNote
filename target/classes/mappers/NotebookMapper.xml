@@ -51,6 +51,19 @@
 		where	
 			cn_notebook_id=#{notebookId}
 	</select>
+
+	<delete id="deleteNoteBook"
+		parameterType="string">
+		delete from
+			cn_notebook
+		where 
+			cn_notebook_id=#{id};
+
+		delete from
+			cn_note
+		where 
+			cn_notebook_id=#{id};
+	</delete>
 	 
 </mapper>
 

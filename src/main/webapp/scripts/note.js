@@ -44,6 +44,8 @@ var noteTemplate='<li class="online note">'+
 function showNotes(notes, page){
 	//找到UL元素
  	var ul = $('#pc_part_2 ul');
+
+
  	if(page==0){
  		ul.empty();
  	}else{
@@ -97,6 +99,10 @@ function updateNoteAction(){
 	//获取用户输入body
 	var note = $('#input_note_title')
 		.data('note');
+	if (note == undefined) {
+		alert("请选择笔记")
+		return
+	}
 	//提交到服务器
 	var title = $('#input_note_title').val();
 	var body = um.getContent();
@@ -111,7 +117,10 @@ function updateNoteAction(){
 	var url='note/update.do';
 	$.post(url, data, function(result){
 		if(result.state==SUCCESS){
-			console.log("Update Success!");
+			$('#can').load('./alert/alert_confirm.html',function(){
+				$('#error_info').text(' 保存成功');
+				$('.opacity_bg').show();
+			});
 			//修改客户端保存的笔记信息属性
 			note.title = title;
 			note.body = body;
@@ -189,7 +198,8 @@ function addNoteAction(){
 		 	var ul = $('#pc_part_2 ul');
 	 		li = noteTemplate.replace(
 	 	 			'[title]', note.title);
-	 		li = $(li);
+	 		li = $(li).data('noteId', note.id);
+	 		// li = $(li);
 	 		ul.prepend(li);
 	 		//更新选定效果
 	 		ul.find('a').removeClass('checked');
@@ -214,7 +224,6 @@ function showPagedNotesAction(){
 }
 
 function nextPageNotesAction(firstPage){
-	console.log('More...');
 	
 	//获取当前UL上绑定的笔记本ID
 	var notebookId=$('#pc_part_2 ul')
@@ -228,12 +237,10 @@ function nextPageNotesAction(firstPage){
 	}
 	//绑定下个页号
 	$('#pc_part_2 ul').data('page',page+1);
-	console.log(notebookId);
 	//ajax 	notebookId	
 	var url='note/list2.do';
 	var data={notebookId:notebookId,
 			page:page};
-	console.log(data)
 	$.getJSON(url, data, function(result){
 		if(result.state==SUCCESS){
 			var list=result.data;

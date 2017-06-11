@@ -13,4 +13,5 @@ public interface NotebookService {
 	Notebook saveNotebook(
 			String name, String userId)
 		throws UserNotFoundException; 
+	public boolean deleteNoteBook(String noteBookId);
 }

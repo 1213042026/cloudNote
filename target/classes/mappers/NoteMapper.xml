@@ -15,9 +15,27 @@
 			cn_note
 		where
 			cn_notebook_id=#{notebookId}
+		and
+			cn_note_status_id != 2
 		order by 
 			cn_note_last_modify_time desc
 		limit #{start}, #{size}
+	</select>
+
+	<select id="sharelist"
+		parameterType="string" 
+		resultType="map">
+		select cn_share_id as shareId, cn_note_title as noteTitle from cn_share left join cn_note on cn_share.cn_note_id = cn_note.cn_note_id where cn_note_title  
+		like concat(concat('%',#{noteTitle}),'%')
+	</select>
+
+	<select id="collectionlist"
+		parameterType="string" 
+		resultType="map">
+		select cn_collection.cn_collection_id as collectionId, cn_note.cn_note_title as title, cn_note.cn_note_body as body from cn_collection 
+left join cn_share on cn_collection.cn_share_id = cn_share.cn_share_id 
+left join cn_note on cn_share.cn_note_id = cn_note.cn_note_id 
+where cn_collection.cn_user_id = #{userId};
 	</select>
 
 
@@ -31,6 +49,24 @@
 			cn_note
 		where
 			cn_notebook_id=#{notebookId}
+		and
+			cn_note_status_id != 2
+		order by 
+			cn_note_last_modify_time desc
+	</select>
+
+	<select id="findTrashNotesByUserid"
+		parameterType="string" 
+		resultType="map">
+		select 
+			cn_note_id as id,
+			cn_note_title as title
+		from
+			cn_note
+		where
+			cn_user_id=#{userId}
+		and
+			cn_note_status_id = 2
 		order by 
 			cn_note_last_modify_time desc
 	</select>
@@ -89,6 +125,30 @@
 			cn_note_id=#{id}
 		</where>
 	</update>
+
+	<update id="deleteNote"
+		parameterType="map">
+		update 
+			cn_note
+		<set>
+			cn_note_status_id = 2
+		</set>
+		<where>
+			cn_note_id=#{id}
+		</where>
+	</update>
+
+	<update id="restoreNote"
+		parameterType="map">
+		update 
+			cn_note
+		<set>
+			cn_note_status_id = 1
+		</set>
+		<where>
+			cn_note_id=#{id}
+		</where>
+	</update>
 	
 	<insert id="addNote"
 		parameterType="cn.tedu.note.entity.Note">
@@ -114,9 +174,33 @@
 			#{lastModifyTime}
 		)
 	</insert>
+
+	<insert id="addShareNote"
+		parameterType="map">
+		insert into	cn_share(
+			cn_share_id,
+			cn_note_id
+		) values (
+			#{id},
+			#{noteId}
+		)
+	</insert>
+
+	<insert id="addCollectNote"
+		parameterType="map">
+		insert into	cn_collection(
+			cn_collection_id,
+			cn_user_id,
+			cn_share_id
+		) values (
+			#{id},
+			#{userId},
+			#{shareId}
+		)
+	</insert>
 	
-	<delete id="deleteNote"
-		parameterType="string">
+	<delete id="deleteComplete"
+		parameterType="map">
 		delete from
 			cn_note
 		where 
@@ -124,7 +208,7 @@
 	</delete>
 	
 	<!-- deleteNotes(List<String> list) -->
-	<delete id="deleteNotes">
+<!-- 	<delete id="deleteNotes">
 		delete from
 			cn_note
 		where 
@@ -135,7 +219,7 @@
 			item="id">
 			#{id}
 		</foreach> 
-	</delete>
+	</delete> -->
 	
 	<!-- NoteMapper.xml -->
 	<!-- 多参数删除, 
@@ -195,6 +279,14 @@
 		where 
 			cn_notebook_id=#{notebookId}
 	</select>
+
+	<delete id="deleteCollect"
+		parameterType="string">
+		delete from
+			cn_collection
+		where 
+			cn_collection_id=#{id};
+	</delete>
 	
 </mapper>
 

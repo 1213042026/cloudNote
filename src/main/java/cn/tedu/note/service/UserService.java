@@ -18,7 +18,7 @@ public interface UserService {
 		String password, String confirm )
 		throws UserExistException, 
 		NameException, PasswordException;
-
+	public boolean changePassword(String password, String userId);
 }
 
 

@@ -1,5 +1,7 @@
 package cn.tedu.note.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -90,6 +92,15 @@ public class UserServiceImpl
 			throw new RuntimeException("保存失败");
 		}
 		return user;
+	}
+
+	public boolean changePassword(String password, String userId) {
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", userId);
+		params.put("password", DigestUtils.md5Hex(
+				password+"世界你好"));
+		return userDao.changePassword(params) == 1;
 	}
 }
 

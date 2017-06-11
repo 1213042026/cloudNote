@@ -13,4 +13,6 @@ public interface NotebookDao {
 	int saveNotebook(Notebook book);
 
 	Notebook findNotebookById(String notebookId);
+
+	int deleteNoteBook(Map<String, Object> params);
 }

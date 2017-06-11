@@ -1,6 +1,7 @@
 package cn.tedu.note.service.impl;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -68,6 +69,23 @@ public class NotebookServiceImpl
 			return book;
 		}
 		throw new RuntimeException("保存失败");
+	}
+
+	@Transactional
+	public boolean deleteNoteBook(String noteBookId) {
+		
+		//创建Map, 封装更新参数
+		//如 title 是 null 则不更新title
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", noteBookId);
+		//更新数据
+		int n =notebookDao.deleteNoteBook(params);
+		return n==1;
+//		if(n==1){
+//			return true;//更新成功
+//		}
+//		return false;//更新失败
 	}
 }
 

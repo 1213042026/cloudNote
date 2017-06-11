@@ -48,6 +48,40 @@ public class NoteServiceImpl implements NoteService {
 		
 		return noteDao.findNotesByNotebookId(notebookId);
 	}
+
+	@Transactional(readOnly=true)
+	public List<Map<String, Object>> sharelist(
+			String noteTitle) throws NotebookNotFoundException {
+		if(noteTitle==null||noteTitle.trim().isEmpty()){
+			throw new NotebookNotFoundException("noteTitle不能空");
+		}
+		
+		return noteDao.sharelist(noteTitle);
+	}
+
+	@Transactional(readOnly=true)
+	public List<Map<String, Object>> collectionlist(
+			String userId) throws NotebookNotFoundException {
+		if(userId==null||userId.trim().isEmpty()){
+			throw new NotebookNotFoundException("userId不能空");
+		}
+		
+		return noteDao.collectionlist(userId);
+	}
+
+	@Transactional(readOnly=true)
+	public List<Map<String, Object>> listTrashNotes(
+			String userId) throws NotebookNotFoundException {
+		if(userId==null||userId.trim().isEmpty()){
+			throw new UserNotFoundException("userId不能空");
+		}
+		User user = userDao.findUserById(userId);
+		if(user == null){
+			throw new UserNotFoundException("userId不存在");
+		}
+		
+		return noteDao.findTrashNotesByUserid(userId);
+	}
 	
 	@Transactional
 	public Note loadNote(String noteId) 
@@ -103,6 +137,98 @@ public class NoteServiceImpl implements NoteService {
 //		}
 //		return false;//更新失败
 	}
+
+	@Transactional
+	public boolean deleteNote(String noteId) 
+			throws NoteNotFoundException {
+		if(noteId==null||noteId.trim().isEmpty()){
+			throw new NoteNotFoundException("ID不能空");
+		}
+		Note note = noteDao.findNoteById(noteId);
+		if(note==null){
+			throw new NoteNotFoundException("ID错");
+		}
+		//创建Map, 封装更新参数
+		//如 title 是 null 则不更新title
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", noteId);
+		//更新数据
+		int n =noteDao.deleteNote(params);
+		return n==1;
+//		if(n==1){
+//			return true;//更新成功
+//		}
+//		return false;//更新失败
+	}
+
+	@Transactional
+	public boolean deleteComplete(String noteId) 
+			throws NoteNotFoundException {
+		if(noteId==null||noteId.trim().isEmpty()){
+			throw new NoteNotFoundException("ID不能空");
+		}
+		Note note = noteDao.findNoteById(noteId);
+		if(note==null){
+			throw new NoteNotFoundException("ID错");
+		}
+		//创建Map, 封装更新参数
+		//如 title 是 null 则不更新title
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", noteId);
+		//更新数据
+		int n =noteDao.deleteComplete(params);
+		return n==1;
+//		if(n==1){
+//			return true;//更新成功
+//		}
+//		return false;//更新失败
+	}
+
+	@Transactional
+	public boolean deleteCollect(String collectionId) 
+			throws NoteNotFoundException {
+		if(collectionId==null||collectionId.trim().isEmpty()){
+			throw new NoteNotFoundException("collectId不能空");
+		}
+		//创建Map, 封装更新参数
+		//如 title 是 null 则不更新title
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", collectionId);
+		//更新数据
+		int n =noteDao.deleteCollect(params);
+		return n==1;
+//		if(n==1){
+//			return true;//更新成功
+//		}
+//		return false;//更新失败
+	}
+
+	@Transactional
+	public boolean restoreNote(String noteId) 
+			throws NoteNotFoundException {
+		if(noteId==null||noteId.trim().isEmpty()){
+			throw new NoteNotFoundException("ID不能空");
+		}
+		Note note = noteDao.findNoteById(noteId);
+		if(note==null){
+			throw new NoteNotFoundException("ID错");
+		}
+		//创建Map, 封装更新参数
+		//如 title 是 null 则不更新title
+		Map<String, Object> params = 
+			new HashMap<String, Object>();
+		params.put("id", noteId);
+		//更新数据
+		int n =noteDao.restoreNote(params);
+		return n==1;
+//		if(n==1){
+//			return true;//更新成功
+//		}
+//		return false;//更新失败
+	}
 	
 	@Transactional
 	public Note addNote(String userId,
@@ -128,7 +254,7 @@ public class NoteServiceImpl implements NoteService {
 		title = title.trim();
 		String body = "";
 		String typeId="0";
-		String statusId="0";
+		String statusId="1";
 		long now = System.currentTimeMillis();
 		Note note = new Note(id, notebookId, userId, statusId, typeId, title, body, now, now);
 		int n = noteDao.addNote(note);
@@ -137,6 +263,55 @@ public class NoteServiceImpl implements NoteService {
 			return note;
 		}
 		throw new RuntimeException("保存失败!");
+
+	}
+
+	@Transactional
+	public boolean addShareNote(String noteId) {
+		if(noteId==null || noteId.trim().isEmpty()){
+			throw new NoteNotFoundException("分享笔记ID不能空");
+		}
+		Note note = noteDao.findNoteById(noteId);
+		if(note==null){
+			throw new NoteNotFoundException("分享笔记ID错误了");
+		}
+
+		String id = UUID.randomUUID().toString();
+		Map<String, Object> map=
+			new HashMap<String, Object>();
+		map.put("noteId", noteId);
+		map.put("id", id);
+		int n = noteDao.addShareNote(map);
+		if( n == 1){
+			
+			return true;
+		}
+		throw new RuntimeException("分享失败!");
+
+	}
+
+	@Transactional
+	public boolean addCollectNote(String shareId, String userId) {
+		if(shareId==null || shareId.trim().isEmpty()){
+			throw new NoteNotFoundException("分享ID不能空");
+		}
+		
+		if(userId==null || userId.trim().isEmpty()){
+			throw new NoteNotFoundException("用户ID不能空");
+		}
+
+		String id = UUID.randomUUID().toString();
+		Map<String, Object> map=
+			new HashMap<String, Object>();
+		map.put("shareId", shareId);
+		map.put("userId", userId);
+		map.put("id", id);
+		int n = noteDao.addCollectNote(map);
+		if( n == 1){
+			
+			return true;
+		}
+		throw new RuntimeException("收藏失败!");
 
 	}
 //	@Transactional
